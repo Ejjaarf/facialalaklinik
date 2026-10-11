@@ -285,7 +285,7 @@ const CONFIG = {
   WA_GROUP: "https://chat.whatsapp.com/CnHnfDg7Bao3fomw6X4haa?s=cl&p=a&mlu=4&ilr=4",
   META_PIXEL_ID: "1772195734051205",   // event: PageView + Lead (saat submit sukses)
   REDIRECT_DELAY_MS: 1200,
-  SUBMIT_TIMEOUT_MS: 6000
+  SUBMIT_TIMEOUT_MS: 15000
 };
 /* ======================================== */
 
@@ -327,6 +327,7 @@ const CONFIG = {
   }
   Object.keys(rules).forEach(n => form.elements[n].addEventListener('blur', () => check(n)));
 
+  let fails = 0;
   function goWA(){ window.location.href = CONFIG.WA_GROUP; }
 
   form.addEventListener('submit', async ev => {
@@ -353,18 +354,32 @@ const CONFIG = {
     btn.disabled = true; btn.textContent = 'Mengirim…';
     const ctrl = new AbortController();
     const timer = setTimeout(() => ctrl.abort(), CONFIG.SUBMIT_TIMEOUT_MS);
+    let saved = false, reason = '';
     try {
-      // text/plain + no-cors = "simple request", tidak kena preflight CORS di Apps Script
-      await fetch(CONFIG.SHEET_ENDPOINT, {
-        method:'POST', mode:'no-cors', signal: ctrl.signal,
+      // text/plain = "simple request" (tanpa preflight); Apps Script membalas dengan header CORS
+      const res = await fetch(CONFIG.SHEET_ENDPOINT, {
+        method:'POST', signal: ctrl.signal, redirect:'follow',
         headers:{'Content-Type':'text/plain;charset=utf-8'},
-        body: JSON.stringify(payload), keepalive:true
+        body: JSON.stringify(payload)
       });
+      const j = await res.json();
+      saved = j && j.ok === true;
+      if (!saved) reason = (j && j.error) || 'respons tidak valid';
     } catch (e) {
-      // Jaringan lambat / timeout: jangan tahan peserta, tetap arahkan ke grup.
-      console.warn('Submit warning:', e);
+      reason = String(e && e.message || e);
+      console.error('Submit gagal:', e);
     }
     clearTimeout(timer);
+
+    if (!saved) {
+      // Jangan diam-diam kehilangan lead: tampilkan error, biarkan coba lagi.
+      fails++;
+      btn.disabled = false; btn.textContent = 'Coba Kirim Lagi';
+      formErr.innerHTML = 'Data belum tersimpan, silakan coba lagi.' +
+        (fails >= 2 ? ' Kalau tetap gagal, <a href="'+CONFIG.WA_GROUP+'" style="color:inherit;font-weight:700">masuk grup WhatsApp langsung</a>.' : '');
+      formErr.style.display = 'block';
+      return;
+    }
 
     if (window.fbq) fbq('track','Lead');
     form.style.display = 'none';
