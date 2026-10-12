@@ -95,6 +95,10 @@ section{padding:56px 0}
 @media (prefers-color-scheme: dark){.reg{background:#0f2f2d}}
 .reg h2{color:#fff}
 .reg-grid{display:grid;gap:28px;align-items:start}
+.reg-info{display:contents}
+.reg-info>h2{order:1;margin:0}.reg-info>p{order:2;margin:0}.reg-info>.cover{order:3;margin:0}
+.reg-form{order:4}.reg-info>.facts{order:5;margin:0}
+.cover{display:block;width:100%;max-width:520px;height:auto;aspect-ratio:1/1;margin:22px 0 0;border-radius:var(--r);box-shadow:0 18px 44px rgba(0,0,0,.28)}
 .facts{list-style:none;padding:0;margin:20px 0 0;display:grid;gap:10px}
 .facts li{background:rgba(255,255,255,.1);border-radius:12px;padding:12px 16px;font-size:15px}
 .facts li b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.7}
@@ -130,6 +134,8 @@ footer{padding:28px 0 90px;text-align:center;font-size:13px;color:var(--ink-2)}
   .cmp{grid-template-columns:1fr 1fr}
   .ben{grid-template-columns:1fr 1fr}
   .reg-grid{grid-template-columns:1fr 1fr;gap:56px}
+  .reg-info{display:block}
+  .reg-info>h2{margin:0 0 .5em}.reg-info>p{margin:0 0 1em}.reg-info>.cover{margin:22px 0 0}.reg-info>.facts{margin:20px 0 0}
   .sticky{display:none}
   footer{padding-bottom:36px}
 }
@@ -229,17 +235,19 @@ footer{padding:28px 0 90px;text-align:center;font-size:13px;color:var(--ink-2)}
 
 <section class="reg" id="daftar">
   <div class="wrap reg-grid">
-    <div>
+    <div class="reg-info">
       <h2>Daftar sekarang sebelum seat penuh</h2>
       <p>Webinar gratis untuk perawat, bidan, dan tenaga kesehatan yang ingin mengenal peluang bisnis homecare beauty tanpa harus langsung resign.</p>
+      <img class="cover" src="COVER.jpg" alt="Cover Free Webinar Homecare Ala Klinik bersama Retno Indah Novianti, pukul 20.00 WIB" width="1254" height="1254" loading="lazy">
       <ul class="facts">
         <li><b>Pemateri</b>Retno Indah Novianti, S.Kep., Ns.</li>
         <li><b>Biaya</b>Gratis</li>
-        <li><b>Jadwal &amp; link webinar</b>Dibagikan di grup WhatsApp setelah Anda mendaftar</li>
+        <li><b>Waktu</b>Pukul 20.00 WIB</li>
+        <li><b>Tanggal &amp; link webinar</b>Dibagikan di grup WhatsApp setelah Anda mendaftar</li>
       </ul>
     </div>
 
-    <div>
+    <div class="reg-form">
       <form id="lead" novalidate autocomplete="on">
         <h3>Isi data singkat Anda</h3>
         <div class="form-err" id="formErr" role="alert"></div>
